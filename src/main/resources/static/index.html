@@ -7,7 +7,7 @@
 </head>
 <body>
 <h2>용인시 탄천길</h2>
-<div id="map" style="width:100%;height:500px;"></div>
+<div id="map" style="width:100%;height:100%;"></div>
 <script>
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
@@ -16,6 +16,51 @@
         };
     // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
     var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다
+    var linePath = [
+        new kakao.maps.LatLng(37.25528, 127.09677),
+        new kakao.maps.LatLng(37.25644, 127.09760),
+        new kakao.maps.LatLng(37.25942, 127.09819),
+        new kakao.maps.LatLng(37.26235, 127.09984),
+        new kakao.maps.LatLng(37.26403, 127.10142),
+        new kakao.maps.LatLng(37.26571, 127.10203),
+        new kakao.maps.LatLng(37.26790, 127.10128),
+        new kakao.maps.LatLng(37.26890, 127.10196),
+        new kakao.maps.LatLng(37.27018, 127.10557),
+        new kakao.maps.LatLng(37.27119, 127.10969),
+        new kakao.maps.LatLng(37.27508, 127.11426),
+        new kakao.maps.LatLng(37.27513, 127.11422),
+        new kakao.maps.LatLng(37.27559, 127.11503),
+        new kakao.maps.LatLng(37.27578, 127.11724),
+        new kakao.maps.LatLng(37.27532, 127.11950),
+        new kakao.maps.LatLng(37.27491, 127.12034),
+        new kakao.maps.LatLng(37.27244, 127.12326),
+        new kakao.maps.LatLng(37.26804, 127.12903),
+        new kakao.maps.LatLng(37.26729, 127.13335),
+        new kakao.maps.LatLng(37.26768, 127.13412),
+        new kakao.maps.LatLng(37.26898, 127.13504),
+        new kakao.maps.LatLng(37.26945, 127.13580),
+        new kakao.maps.LatLng(37.26982, 127.13729),
+        new kakao.maps.LatLng(37.27039, 127.13767),
+        new kakao.maps.LatLng(37.27222, 127.13827),
+        new kakao.maps.LatLng(37.27336, 127.13913),
+        new kakao.maps.LatLng(37.27404, 127.14065),
+        new kakao.maps.LatLng(37.27521, 127.14402),
+        new kakao.maps.LatLng(37.27531, 127.14746)
+    ];
+
+    // 지도에 표시할 선을 생성합니다
+    var polyline = new kakao.maps.Polyline({
+        path: linePath, // 선을 구성하는 좌표배열 입니다
+        strokeWeight: 5, // 선의 두께 입니다
+        strokeColor: '#FFAE00', // 선의 색깔입니다
+        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'solid' // 선의 스타일입니다
+    });
+
+    // 지도에 선을 표시합니다
+    polyline.setMap(map);
 </script>
 </body>
 </html>
