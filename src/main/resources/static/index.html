@@ -136,6 +136,7 @@
 
         // 선에 click 이벤트를 등록하고 이벤트가 발생하면 선의 이름과 면적을 인포윈도우에 표시합니다
         kakao.maps.event.addListener(polyline, 'click', function(mouseEvent) {
+            map.panTo(mouseEvent.latLng);
             var content = '<div class="info">' +
                 '   <div class="title">' + area.name + '</div>' +
                 '   <div class="size">총 거리 ' + Math.round(polyline.getLength()) + 'm</div>';
