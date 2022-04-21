@@ -1,10 +1,250 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Tancheon</title>
+    <style>
+        .area {
+            position: absolute;
+            background: #fff;
+            border: 1px solid #888;
+            border-radius: 3px;
+            font-size: 12px;
+            top: -5px;
+            left: 15px;
+            padding:2px;
+        }
+        .info {
+            font-size: 12px;
+            padding: 5px;
+        }
+        .info .title {
+            font-weight: bold;
+        }
+    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
 </head>
 <body>
-<h2>처인구</h2>
+<div>
+    <h2>용인시 탄천길</h2>
+    <p>목록</p>
+    <p>
+        <a href="/">전체</a>
+        <a href="/suji">수지구</a>
+        <a href="/giheung">기흥구</a>
+        <a href="/cheoin">처인구</a>
+    </p>
+</div>
+<div id="map" style="width:100%;height:800px;"></div>
+<script>
+    var areas = [
+        // 처인구
+        {
+            name : '금학천',
+            path : [
+                new kakao.maps.LatLng(37.23959, 127.17496),
+                new kakao.maps.LatLng(37.23945, 127.17711),
+                new kakao.maps.LatLng(37.24006, 127.18046),
+                new kakao.maps.LatLng(37.23999, 127.18081),
+                new kakao.maps.LatLng(37.23935, 127.18205),
+                new kakao.maps.LatLng(37.23859, 127.18597),
+                new kakao.maps.LatLng(37.23839, 127.18875),
+                new kakao.maps.LatLng(37.23825, 127.18935),
+                new kakao.maps.LatLng(37.23767, 127.19085),
+                new kakao.maps.LatLng(37.23714, 127.19373),
+                new kakao.maps.LatLng(37.23725, 127.19795),
+                new kakao.maps.LatLng(37.23712, 127.19951),
+                new kakao.maps.LatLng(37.23673, 127.20187),
+                new kakao.maps.LatLng(37.23642, 127.20181),
+                new kakao.maps.LatLng(37.23640, 127.20235),
+                new kakao.maps.LatLng(37.23681, 127.20379),
+                new kakao.maps.LatLng(37.23756, 127.20719),
+                new kakao.maps.LatLng(37.23758, 127.20852),
+                new kakao.maps.LatLng(37.23744, 127.20946)
+            ]
+        },{
+            name : '경안천',
+            path : [
+                new kakao.maps.LatLng(37.22533, 127.22057),
+                new kakao.maps.LatLng(37.22605, 127.21812),
+                new kakao.maps.LatLng(37.22544, 127.21537),
+                new kakao.maps.LatLng(37.22668, 127.21203),
+                new kakao.maps.LatLng(37.22781, 127.21152),
+                new kakao.maps.LatLng(37.22832, 127.21172),
+                new kakao.maps.LatLng(37.22944, 127.21259),
+                new kakao.maps.LatLng(37.23221, 127.21173),
+                new kakao.maps.LatLng(37.23382, 127.21009),
+                new kakao.maps.LatLng(37.23470, 127.20969),
+                new kakao.maps.LatLng(37.23744, 127.20946),
+                new kakao.maps.LatLng(37.24008, 127.21142),
+                new kakao.maps.LatLng(37.24085, 127.21159),
+                new kakao.maps.LatLng(37.24221, 127.21202),
+                new kakao.maps.LatLng(37.24512, 127.21381),
+                new kakao.maps.LatLng(37.24914, 127.21450),
+                new kakao.maps.LatLng(37.25278, 127.21845),
+                new kakao.maps.LatLng(37.25366, 127.21880),
+                new kakao.maps.LatLng(37.26013, 127.21719),
+                new kakao.maps.LatLng(37.26356, 127.21475),
+                new kakao.maps.LatLng(37.26387, 127.21555),
+                new kakao.maps.LatLng(37.26544, 127.21426),
+                new kakao.maps.LatLng(37.26765, 127.21206),
+                new kakao.maps.LatLng(37.27056, 127.21115),
+                new kakao.maps.LatLng(37.27456, 127.21549),
+                new kakao.maps.LatLng(37.27706, 127.21886),
+                new kakao.maps.LatLng(37.27841, 127.22179),
+                new kakao.maps.LatLng(37.27883, 127.22536),
+                new kakao.maps.LatLng(37.27969, 127.22533),
+                new kakao.maps.LatLng(37.28030, 127.22807),
+                new kakao.maps.LatLng(37.28058, 127.22898),
+                new kakao.maps.LatLng(37.28378, 127.23053),
+                new kakao.maps.LatLng(37.28865, 127.23216),
+                new kakao.maps.LatLng(37.29160, 127.23370),
+                new kakao.maps.LatLng(37.29283, 127.23371),
+                new kakao.maps.LatLng(37.29868, 127.22954),
+                new kakao.maps.LatLng(37.29996, 127.22935),
+                new kakao.maps.LatLng(37.30348, 127.23087)
+            ]
+        },{
+            name : '양지천',
+            path : [
+                new kakao.maps.LatLng(37.24085, 127.21159),
+                new kakao.maps.LatLng(37.23851, 127.21568),
+                new kakao.maps.LatLng(37.23642, 127.21639),
+                new kakao.maps.LatLng(37.23595, 127.21618),
+                new kakao.maps.LatLng(37.23540, 127.21868),
+                new kakao.maps.LatLng(37.23397, 127.22123),
+                new kakao.maps.LatLng(37.23368, 127.22236),
+                new kakao.maps.LatLng(37.23397, 127.22431),
+                new kakao.maps.LatLng(37.23411, 127.22614),
+                new kakao.maps.LatLng(37.23540, 127.23013),
+                new kakao.maps.LatLng(37.23463, 127.23349),
+                new kakao.maps.LatLng(37.23311, 127.23730),
+                new kakao.maps.LatLng(37.23254, 127.23740),
+                new kakao.maps.LatLng(37.23218, 127.23781),
+                new kakao.maps.LatLng(37.23123, 127.23799),
+                new kakao.maps.LatLng(37.23047, 127.23867),
+                new kakao.maps.LatLng(37.22899, 127.24476)
+            ]
+        },{
+            name : '대대천',
+            path : [
+                new kakao.maps.LatLng(37.25366, 127.21880),
+                new kakao.maps.LatLng(37.25370, 127.21979),
+                new kakao.maps.LatLng(37.25215, 127.22281),
+                new kakao.maps.LatLng(37.24923, 127.23056),
+                new kakao.maps.LatLng(37.24922, 127.23135),
+                new kakao.maps.LatLng(37.25068, 127.23328),
+                new kakao.maps.LatLng(37.25163, 127.23519),
+                new kakao.maps.LatLng(37.25279, 127.23644),
+                new kakao.maps.LatLng(37.25370, 127.23736),
+                new kakao.maps.LatLng(37.25399, 127.23801)
+            ]
+        },{
+            name : '금어천',
+            path : [
+                new kakao.maps.LatLng(37.26544, 127.21426),
+                new kakao.maps.LatLng(37.26635, 127.22129),
+                new kakao.maps.LatLng(37.26619, 127.22134),
+                new kakao.maps.LatLng(37.26657, 127.22568)
+            ]
+        },{
+            name : '신대천',
+            path : [
+                new kakao.maps.LatLng(37.28725, 127.21727),
+                new kakao.maps.LatLng(37.28617, 127.21931),
+                new kakao.maps.LatLng(37.28488, 127.22066),
+                new kakao.maps.LatLng(37.28268, 127.22380),
+                new kakao.maps.LatLng(37.28220, 127.22465),
+                new kakao.maps.LatLng(37.28144, 127.22643),
+                new kakao.maps.LatLng(37.28080, 127.22713),
+                new kakao.maps.LatLng(37.28030, 127.22807)
+            ]
+        }
+    ];
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(37.28042, 127.11472), // 지도의 중심좌표
+            level: 6 // 지도의 확대 레벨
+        };
+    // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption),
+        customOverlay = new kakao.maps.CustomOverlay({}),
+        infowindow = new kakao.maps.InfoWindow({removable: true});
+
+    for (var i = 0, len = areas.length; i < len; i++) {
+        displayArea(areas[i]);
+    }
+
+    // 라인을 생성하고 이벤트를 등록하는 함수입니다
+    function displayArea(area) {
+
+        // 라인을 생성합니다
+        var polyline = new kakao.maps.Polyline({
+            map: map, // 선을 표시할 지도 객체
+            path: area.path, // 선을 구성하는 좌표배열 입니다
+            strokeWeight: 5, // 선의 두께 입니다
+            strokeColor: '#FF3636', // 선의 색깔입니다
+            strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid' // 선의 스타일입니다
+        });
+
+        // 선에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+        var mouseoverOption = {
+            strokeWeight: 10, // 선의 두께 입니다
+            strokeOpacity: 1 // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        };
+
+        // 선에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+        var mouseoutOption = {
+            strokeWeight: 5, // 선의 두께 입니다
+            strokeOpacity: 0.7 // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        };
+
+        // 선에 mouseover 이벤트를 등록하고 이벤트가 발생하면 선의 두께 변경합니다
+        // 하천명을 표시하는 커스텀오버레이를 지도위에 표시합니다
+        kakao.maps.event.addListener(polyline, 'mouseover', function(mouseEvent) {
+            polyline.setOptions(mouseoverOption);
+            customOverlay.setContent('<div class="area">' + area.name + '</div>');
+            customOverlay.setPosition(mouseEvent.latLng);
+            customOverlay.setMap(map);
+        });
+
+        // 선에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다
+        kakao.maps.event.addListener(polyline, 'mousemove', function(mouseEvent) {
+
+            customOverlay.setPosition(mouseEvent.latLng);
+        });
+
+        // 선에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
+        // 커스텀 오버레이를 지도에서 제거합니다
+        kakao.maps.event.addListener(polyline, 'mouseout', function() {
+            polyline.setOptions(mouseoutOption);
+            customOverlay.setMap(null);
+        });
+
+        // 선에 click 이벤트를 등록하고 이벤트가 발생하면 선의 이름과 면적을 인포윈도우에 표시합니다
+        kakao.maps.event.addListener(polyline, 'click', function(mouseEvent) {
+            map.panTo(mouseEvent.latLng);
+            var distance = Math.round(polyline.getLength());
+            var walkkTime = distance / 67 | 0;
+            var walkHour = '', walkMin = '';
+
+            // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
+            if (walkkTime > 60) {
+                walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
+            }
+            walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
+
+            var content = '<div class="info">' +
+                '   <div class="title">' + area.name + '</div>' +
+                '   <div class="size">총 거리 ' + distance + 'm</div>' +
+                '   <div class="size">도보 ' +  walkHour + walkMin + '</div>';
+            infowindow.setContent(content);
+            infowindow.setPosition(mouseEvent.latLng);
+            infowindow.setMap(map);
+        });
+
+    }
+</script>
 </body>
 </html>
