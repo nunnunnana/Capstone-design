@@ -2,38 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Tancheon</title>
-    <style>
-        .area {
-            position: absolute;
-            background: #fff;
-            border: 1px solid #888;
-            border-radius: 3px;
-            font-size: 12px;
-            top: -5px;
-            left: 15px;
-            padding:2px;
-        }
-        .info {
-            font-size: 12px;
-            padding: 5px;
-        }
-        .info .title {
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
 </head>
 <body>
 <div>
-    <h2>용인시 탄천길</h2>
-    <p>목록</p>
-    <p>
-        <a href="/">전체</a>
-        <a href="/suji">수지구</a>
-        <a href="/giheung">기흥구</a>
-        <a href="/cheoin">처인구</a>
-    </p>
+    <a class="post sel">홈</a>
+    <a class="post">추천로</a>
+    <a class="post">길찾기</a>
+    <a class="post">게시판</a>
+</div>
+<hr>
+<div>
+    <button class="button" onclick="location.href='/'">전체</button>
+    <button class="button" onclick="location.href='/suji'">수지구</button>
+    <button class="button" onclick="location.href='/giheung'">기흥구</button>
+    <button class="button btn1" onclick="location.href='/cheoin'">처인구</button>
 </div>
 <div id="map" style="width:100%;height:800px;"></div>
 <script>

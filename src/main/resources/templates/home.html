@@ -2,46 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Tancheon</title>
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
 </head>
 <body>
 <div>
-    <header>
-        <div id="header"><h1>스마트폰</h1>
-            <p>스마트폰은 컴퓨터를 결합한 무선 휴대전화기이다. PC에서 실행되는 운영체제보다 작게 만든 모바일 운영체제를 탑재하여 인터넷 검색, 전자우편, 간단한 문서 편집, 카메라, 오디오 및 비디오 재생 등  PC의 기능을 거의 모두 갖추고 있다.
-            </p>
-        </div>
-    </header>
-    <h2>용인시 탄천길</h2>
-    <p>목록</p>
-    <p>
-        <a href="/">전체</a>
-        <a href="/suji">수지구</a>
-        <a href="/giheung">기흥구</a>
-        <a href="/cheoin">처인구</a>
-    </p>
+    <a class="post sel">홈</a>
+    <a class="post">추천로</a>
+    <a class="post">길찾기</a>
+    <a class="post">게시판</a>
 </div>
-<div class="mt-4 text-gray-300 text-xl font-bold space-x-2 border-b pb-2 mb-2">
-    <a href="/post">홈</a>
-    <a href="/post">추천로</a>
-    <a href="/post">길찾기</a>
-    <a href="/post">게시판</a>
-</div>
-<div class="border-b pb-2 px-2">
-    <button class="bg-blue-500 text-white border-none rounded px-4 py-2">
-        <a href="/">전체</a>
-    </button>
-    <button class="suji">
-        <a href="/suji">수지구</a>
-    </button>
-    <button class="bg-gray-100 text-white border-none rounded px-4 py-2 text-gray-300">
-        <a href="/giheung">기흥구</a>
-    </button>
-    <button class="bg-gray-100 text-white border-none rounded px-4 py-2 text-gray-300">
-        <a href="/cheoin">처인구</a>
-    </button>
+<hr>
+<div>
+    <button class="button btn1" onclick="location.href='/'">전체</button>
+    <button class="button" onclick="location.href='/suji'">수지구</button>
+    <button class="button" onclick="location.href='/giheung'">기흥구</button>
+    <button class="button" onclick="location.href='/cheoin'">처인구</button>
 </div>
 <div id="map" style="width:100%;height:800px;"></div>
 <script>
