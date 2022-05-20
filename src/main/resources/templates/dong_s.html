@@ -5,6 +5,12 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
+    <style>
+        .clicked {
+            color:white;
+            background-color: dodgerblue;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -21,16 +27,39 @@
     <button class="button" onclick="location.href='/cheoin'">처인구</button>
 </div>
 <div>
-    <button class="button" onclick="location.href='/dong_s'">풍덕천동</button>
-    <button class="button" onclick="location.href='/dong_s'">성복동</button>
-    <button class="button" onclick="location.href='/dong_s'">신봉동</button>
-    <button class="button" onclick="location.href='/dong_s'">동천동</button>
-    <button class="button" onclick="location.href='/dong_s'">죽전동</button>
+    <button class="button" onclick='search_area()'>풍덕천동</button>
+    <button class="button" onclick='search_area()'>성복동</button>
+    <button class="button" onclick='search_area()'>신봉동</button>
+    <button class="button" onclick='search_area()'>동천동</button>
+    <button class="button" onclick='search_area()'>죽전동</button>
 </div>
 <div id="map" style="width:100%;height:800px;"></div>
 <script>
+    function search_area() {
+        let button = document.getElementsByClassName("button");
+        for (let i = 0; i < button.length; i++) {
+            button[i].classList.remove("clicked");
+        }
+        event.target.classList.add("clicked");
+        const clicked = document.getElementsByClassName("clicked");
+        infowindow.setMap(null);
+        deletePolyLine();
+        let i = null;
+        if(clicked[0].textContent === '성복동') i = 0;
+        else if(clicked[0].textContent === '신봉동') i = 1;
+        else if(clicked[0].textContent === '동천동') i = 2;
+        else if(clicked[0].textContent === '죽전동') i = 3;
+        else if(clicked[0].textContent === '풍덕천동') i = 4;
+
+        displayArea(areas[i]);
+        var n = areas[i].path.length;
+        var moveLatLng = areas[i].path[parseInt(n/2)];
+        map.panTo(moveLatLng);
+    }
+</script>
+<script>
     var areas = [
-        // 수지구
+        // 성복동
         {
             name : '성복천',
             path : [
@@ -51,52 +80,10 @@
                 new kakao.maps.LatLng(37.31587, 127.07171),
                 new kakao.maps.LatLng(37.31509, 127.07484),
                 new kakao.maps.LatLng(37.31510, 127.07536),
-                new kakao.maps.LatLng(37.31521, 127.07622),
-                new kakao.maps.LatLng(37.31523, 127.07761),
-                new kakao.maps.LatLng(37.31522, 127.07798),
-                new kakao.maps.LatLng(37.31428, 127.08082),
-                new kakao.maps.LatLng(37.31388, 127.08214),
-                new kakao.maps.LatLng(37.31378, 127.08298),
-                new kakao.maps.LatLng(37.31382, 127.08358),
-                new kakao.maps.LatLng(37.31404, 127.08449),
-                new kakao.maps.LatLng(37.31391, 127.08454),
-                new kakao.maps.LatLng(37.31419, 127.08548),
-                new kakao.maps.LatLng(37.31422, 127.08602),
-                new kakao.maps.LatLng(37.31433, 127.08631),
-                new kakao.maps.LatLng(37.31439, 127.08697),
-                new kakao.maps.LatLng(37.31435, 127.08849),
-                new kakao.maps.LatLng(37.31426, 127.08872),
-                new kakao.maps.LatLng(37.31430, 127.08908),
-                new kakao.maps.LatLng(37.31432, 127.09055),
-                new kakao.maps.LatLng(37.31437, 127.09104),
-                new kakao.maps.LatLng(37.31445, 127.09134),
-                new kakao.maps.LatLng(37.31455, 127.09154),
-                new kakao.maps.LatLng(37.31504, 127.09199),
-                new kakao.maps.LatLng(37.31628, 127.09260),
-                new kakao.maps.LatLng(37.31860, 127.09616),
-                new kakao.maps.LatLng(37.31886, 127.09648),
-                new kakao.maps.LatLng(37.32044, 127.09762),
-                new kakao.maps.LatLng(37.32079, 127.09794),
-                new kakao.maps.LatLng(37.32102, 127.09808),
-                new kakao.maps.LatLng(37.32125, 127.09833),
-                new kakao.maps.LatLng(37.32141, 127.09853),
-                new kakao.maps.LatLng(37.32171, 127.09924),
-                new kakao.maps.LatLng(37.32194, 127.10106),
-                new kakao.maps.LatLng(37.32205, 127.10158),
-                new kakao.maps.LatLng(37.32256, 127.10195),
-                new kakao.maps.LatLng(37.32336, 127.10378),
-                new kakao.maps.LatLng(37.32355, 127.10397),
-                new kakao.maps.LatLng(37.32376, 127.10441),
-                new kakao.maps.LatLng(37.32391, 127.10483),
-                new kakao.maps.LatLng(37.32395, 127.10522),
-                new kakao.maps.LatLng(37.32393, 127.10555),
-                new kakao.maps.LatLng(37.32375, 127.10657),
-                new kakao.maps.LatLng(37.32372, 127.10690),
-                new kakao.maps.LatLng(37.32384, 127.10778),
-                new kakao.maps.LatLng(37.32423, 127.10992)
+                new kakao.maps.LatLng(37.31521, 127.07622)
 
             ]
-        }, {
+        }, { // 신봉동
             name : '정평천',
             path : [
                 new kakao.maps.LatLng(37.33041, 127.06519),
@@ -132,24 +119,9 @@
                 new kakao.maps.LatLng(37.32145, 127.08127),
                 new kakao.maps.LatLng(37.32129, 127.08236),
                 new kakao.maps.LatLng(37.32107, 127.08424),
-                new kakao.maps.LatLng(37.32084, 127.08542),
-                new kakao.maps.LatLng(37.32054, 127.08651),
-                new kakao.maps.LatLng(37.32046, 127.08706),
-                new kakao.maps.LatLng(37.32031, 127.08762),
-                new kakao.maps.LatLng(37.31922, 127.09070),
-                new kakao.maps.LatLng(37.31884, 127.09168),
-                new kakao.maps.LatLng(37.31869, 127.09217),
-                new kakao.maps.LatLng(37.31867, 127.09249),
-                new kakao.maps.LatLng(37.31871, 127.09280),
-                new kakao.maps.LatLng(37.31853, 127.09285),
-                new kakao.maps.LatLng(37.31875, 127.09337),
-                new kakao.maps.LatLng(37.31931, 127.09434),
-                new kakao.maps.LatLng(37.31916, 127.09472),
-                new kakao.maps.LatLng(37.31880, 127.09578),
-                new kakao.maps.LatLng(37.31866, 127.09580),
-                new kakao.maps.LatLng(37.31860, 127.09616)
+                new kakao.maps.LatLng(37.32084, 127.08542)
             ]
-        }, {
+        }, { // 동천동
             name : '손곡천',
             path : [
                 new kakao.maps.LatLng(37.33745, 127.08726),
@@ -164,9 +136,16 @@
                 new kakao.maps.LatLng(37.34266, 127.09718),
                 new kakao.maps.LatLng(37.34286, 127.09750)
             ]
-        }, {
+        }, { // 죽전동
             name : '탄천',
             path : [
+                new kakao.maps.LatLng(37.32376, 127.10441),
+                new kakao.maps.LatLng(37.32391, 127.10483),
+                new kakao.maps.LatLng(37.32395, 127.10522),
+                new kakao.maps.LatLng(37.32393, 127.10555),
+                new kakao.maps.LatLng(37.32375, 127.10657),
+                new kakao.maps.LatLng(37.32372, 127.10690),
+                new kakao.maps.LatLng(37.32384, 127.10778),
                 new kakao.maps.LatLng(37.32423, 127.10992),
                 new kakao.maps.LatLng(37.32446, 127.11087),
                 new kakao.maps.LatLng(37.32581, 127.11108),
@@ -176,26 +155,63 @@
                 new kakao.maps.LatLng(37.33415, 127.11284),
                 new kakao.maps.LatLng(37.33563, 127.11248)
             ]
+        }, { // 풍덕천동
+            name : '풍덕천',
+            path : [
+                new kakao.maps.LatLng(37.31521, 127.07622),
+                new kakao.maps.LatLng(37.31523, 127.07761),
+                new kakao.maps.LatLng(37.31522, 127.07798),
+                new kakao.maps.LatLng(37.31428, 127.08082),
+                new kakao.maps.LatLng(37.31388, 127.08214),
+                new kakao.maps.LatLng(37.31378, 127.08298),
+                new kakao.maps.LatLng(37.31382, 127.08358),
+                new kakao.maps.LatLng(37.31404, 127.08449),
+                new kakao.maps.LatLng(37.31391, 127.08454),
+                new kakao.maps.LatLng(37.31419, 127.08548),
+                new kakao.maps.LatLng(37.31422, 127.08602),
+                new kakao.maps.LatLng(37.31433, 127.08631),
+                new kakao.maps.LatLng(37.31439, 127.08697),
+                new kakao.maps.LatLng(37.31435, 127.08849),
+                new kakao.maps.LatLng(37.31426, 127.08872),
+                new kakao.maps.LatLng(37.31430, 127.08908),
+                new kakao.maps.LatLng(37.31432, 127.09055),
+                new kakao.maps.LatLng(37.31437, 127.09104),
+                new kakao.maps.LatLng(37.31445, 127.09134),
+                new kakao.maps.LatLng(37.31455, 127.09154),
+                new kakao.maps.LatLng(37.31504, 127.09199),
+                new kakao.maps.LatLng(37.31628, 127.09260),
+                new kakao.maps.LatLng(37.31860, 127.09616),
+                new kakao.maps.LatLng(37.31886, 127.09648),
+                new kakao.maps.LatLng(37.32044, 127.09762),
+                new kakao.maps.LatLng(37.32079, 127.09794),
+                new kakao.maps.LatLng(37.32102, 127.09808),
+                new kakao.maps.LatLng(37.32125, 127.09833),
+                new kakao.maps.LatLng(37.32141, 127.09853),
+                new kakao.maps.LatLng(37.32171, 127.09924),
+                new kakao.maps.LatLng(37.32194, 127.10106),
+                new kakao.maps.LatLng(37.32205, 127.10158),
+                new kakao.maps.LatLng(37.32256, 127.10195),
+                new kakao.maps.LatLng(37.32336, 127.10378),
+                new kakao.maps.LatLng(37.32355, 127.10397),
+                new kakao.maps.LatLng(37.32376, 127.10441)
+            ]
         }
     ];
+    var polyline;
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new kakao.maps.LatLng(37.322025327756, 127.09791279434), // 지도의 중심좌표
-            level: 6 // 지도의 확대 레벨
+            level: 4 // 지도의 확대 레벨
         };
     // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
     var map = new kakao.maps.Map(mapContainer, mapOption),
         customOverlay = new kakao.maps.CustomOverlay({}),
         infowindow = new kakao.maps.InfoWindow({removable: true});
 
-    for (var i = 0, len = areas.length; i < len; i++) {
-        displayArea(areas[i]);
-    }
-
     // 라인을 생성하고 이벤트를 등록하는 함수입니다
     function displayArea(area) {
         // 라인을 생성합니다
-        var polyline = new kakao.maps.Polyline({
+        polyline = new kakao.maps.Polyline({
             map: map, // 선을 표시할 지도 객체
             path: area.path, // 선을 구성하는 좌표배열 입니다
             strokeWeight: 7, // 선의 두께 입니다
@@ -261,6 +277,13 @@
         });
     }
 
+    // 선을 지도에서 제거하는 함수입니다
+    function deletePolyLine() {
+        if (polyline) {
+            polyline.setMap(null);
+            polyline = null;
+        }
+    }
 </script>
 </body>
 </html>

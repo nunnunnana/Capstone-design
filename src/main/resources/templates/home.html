@@ -8,9 +8,9 @@
 </head>
 <body>
 <div>
-    <a class="post sel">홈</a>
-    <a class="post">추천로</a>
-    <a class="post">길찾기</a>
+    <a class="post sel" onclick="location.href='/'">홈</a>
+    <a class="post" onclick="location.href='/recommend'">추천로</a>
+    <a class="post" onclick="location.href='/findway'">길찾기</a>
     <a class="post">게시판</a>
 </div>
 <hr>
@@ -289,7 +289,6 @@
                 new kakao.maps.LatLng(37.31388, 127.08214),
                 new kakao.maps.LatLng(37.31378, 127.08298),
                 new kakao.maps.LatLng(37.31382, 127.08358),
-                new kakao.maps.LatLng(37.31428, 127.08527),
                 new kakao.maps.LatLng(37.31404, 127.08449),
                 new kakao.maps.LatLng(37.31391, 127.08454),
                 new kakao.maps.LatLng(37.31419, 127.08548),
@@ -325,7 +324,7 @@
                 new kakao.maps.LatLng(37.32375, 127.10657),
                 new kakao.maps.LatLng(37.32372, 127.10690),
                 new kakao.maps.LatLng(37.32384, 127.10778),
-                new kakao.maps.LatLng(37.32423, 127.10992),
+                new kakao.maps.LatLng(37.32423, 127.10992)
 
             ]
         }, {
@@ -554,7 +553,7 @@
             map: map, // 선을 표시할 지도 객체
             path: area.path, // 선을 구성하는 좌표배열 입니다
             strokeWeight: 7, // 선의 두께 입니다
-            strokeColor: '#FF3636', // 선의 색깔입니다
+            strokeColor: '#046DDD', // 선의 색깔입니다
             strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
             strokeStyle: 'solid' // 선의 스타일입니다
         });
@@ -595,7 +594,6 @@
 
         // 선에 click 이벤트를 등록하고 이벤트가 발생하면 선의 이름과 면적을 인포윈도우에 표시합니다
         kakao.maps.event.addListener(polyline, 'click', function(mouseEvent) {
-            map.panTo(mouseEvent.latLng);
             var distance = Math.round(polyline.getLength());
             var walkkTime = distance / 67 | 0;
             var walkHour = '', walkMin = '';
@@ -613,6 +611,7 @@
             infowindow.setContent(content);
             infowindow.setPosition(mouseEvent.latLng);
             infowindow.setMap(map);
+            map.panTo(mouseEvent.latLng);
         });
 
     }

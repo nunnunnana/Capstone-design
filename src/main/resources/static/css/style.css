@@ -1,4 +1,14 @@
- .area {
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+#map {
+    width: 100%;
+    height: 100%;
+}
+.area {
             position: absolute;
             background: #fff;
             border: 1px solid #888;
@@ -57,3 +67,4 @@
             color:white;
             background-color: dodgerblue;
         }
+        

@@ -1,0 +1,818 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Tancheon</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    #map {
+      width: 100%;
+      height: 80%;
+    }
+    .clicked {
+      color:white;
+      background-color: dodgerblue;
+  }
+    .arrow-prev,
+    .arrow-next {
+      display: inline-block;
+
+      margin: 5px 10px 5px 0;
+      border-radius: 5px;
+      border: none;
+
+      position: relative;
+      float:left;
+      width:120px;
+      height:50px;
+    }
+
+    .arrow-prev:hover{
+      background-color: #F6FAFE;
+      cursor: pointer;
+    }
+    .arrow-next:hover{
+      background-color: #F6FAFE;
+      cursor: pointer;
+    }
+
+    .arrow-prev::after {
+      position: absolute;
+      left: 50px;
+      top: 20px;
+      content: '';
+      width: 20px; /* 사이즈 */
+      height: 20px; /* 사이즈 */
+      border-top: 5px solid #7E7E7E; /* 선 두께 */
+      border-right: 5px solid #7E7E7E; /* 선 두께 */
+      transform: rotate(315deg); /* 각도 */
+    }
+
+    .arrow-next::after {
+      position: absolute;
+      left: 50px;
+      bottom: 20px;
+      content: '';
+      width: 20px; /* 사이즈 */
+      height: 20px; /* 사이즈 */
+      border-top: 5px solid #7E7E7E; /* 선 두께 */
+      border-right: 5px solid #7E7E7E; /* 선 두께 */
+      transform: rotate(135deg); /* 각도 */
+    }
+
+    .arrow-prev:hover::after{
+      border-top: 5px solid dodgerblue; /* 선 두께 */
+      border-right: 5px solid dodgerblue; /* 선 두께 */
+    }
+
+    .arrow-next:hover::after{
+      border-top: 5px solid dodgerblue; /* 선 두께 */
+      border-right: 5px solid dodgerblue; /* 선 두께 */
+    }
+
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <a class="post" onclick="location.href='/'">홈</a>
+    <a class="post sel" onclick="location.href='/recommend'">추천로</a>
+    <a class="post" onclick="location.href='/findway'">길찾기</a>
+    <a class="post">게시판</a>
+  </div>
+</header>
+<hr>
+<div id="toc-content">
+  <div>
+    <button class="place button">수지구</button>
+    <button class="place button">기흥구</button>
+    <button class="place button">처인구</button>
+  </div>
+  <div>
+    <button class="way button">편도</button>
+    <button class="way button">왕복</button>
+  </div>
+  <div>
+    <button class="time button">15분</button>
+    <button class="time button">30분</button>
+    <button class="time button">45분</button>
+    <button class="time button">60분</button>
+  </div>
+  <div>
+    <button class="button" onclick='search()'>검색</button>
+  </div>
+</div>
+<span id="toc-toggle" onclick="openCloseToc()" class="arrow-prev"></span>
+<div id="map"></div>
+<script>
+  let place = document.getElementsByClassName("place button");
+  let way = document.getElementsByClassName("way button");
+  let time = document.getElementsByClassName("time button");
+  init(place);
+  init(way);
+  init(time);
+
+  function init(select) {
+    for (let i = 0; i < select.length; i++) {
+      select[i].addEventListener("click", handleClick);
+    }
+    function handleClick(event) {
+      for (let i = 0; i < select.length; i++) {
+        select[i].classList.remove("clicked");
+      }
+      event.target.classList.add("clicked");
+    }
+  }
+  function search() {
+    const clicked = document.getElementsByClassName("clicked");
+    infowindow.setMap(null);
+    deletePolyLine();
+
+    let i = 0;
+    if(clicked[0].textContent == '수지구' && clicked[1].textContent == '편도' && clicked[2].textContent == '15분') i = 0;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '편도' && clicked[2].textContent == '30분') i = 1;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '편도' && clicked[2].textContent == '45분') i = 2;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '편도' && clicked[2].textContent == '60분') i = 3;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '15분') i = 4;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '30분') i = 5;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '45분') i = 6;
+    else if(clicked[0].textContent == '수지구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '60분') i = 7;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '편도' && clicked[2].textContent == '15분') i = 8;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '편도' && clicked[2].textContent == '30분') i = 9;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '편도' && clicked[2].textContent == '45분') i = 10;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '편도' && clicked[2].textContent == '60분') i = 11;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '15분') i = 12;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '30분') i = 13;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '45분') i = 14;
+    else if(clicked[0].textContent == '기흥구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '60분') i = 15;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '편도' && clicked[2].textContent == '15분') i = 16;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '편도' && clicked[2].textContent == '30분') i = 17;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '편도' && clicked[2].textContent == '45분') i = 18;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '편도' && clicked[2].textContent == '60분') i = 19;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '15분') i = 20;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '30분') i = 21;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '45분') i = 22;
+    else if(clicked[0].textContent == '처인구' && clicked[1].textContent == '왕복' && clicked[2].textContent == '60분') i = 23;
+
+    displayArea(areas[i]);
+    var n = areas[i].path.length;
+    var moveLatLng = areas[i].path[parseInt(n/2)];
+    map.panTo(moveLatLng);
+
+  }
+
+  document.getElementById('toc-content').style.display = 'block';
+  function openCloseToc() {
+    if(document.getElementById('toc-content').style.display === 'block') {
+      document.getElementById('toc-content').style.display = 'none';
+      document.getElementById("toc-toggle").className = "arrow-next";
+    } else {
+      document.getElementById('toc-content').style.display = 'block';
+      document.getElementById("toc-toggle").className = "arrow-prev";
+    }
+  }
+
+</script>
+<script>
+  var areas = [
+    // 수지구
+    // 편도
+    { // 15분
+      name : '손곡천',
+      path : [
+        new kakao.maps.LatLng(37.33745, 127.08726),
+        new kakao.maps.LatLng(37.33771, 127.08824),
+        new kakao.maps.LatLng(37.33746, 127.08960),
+        new kakao.maps.LatLng(37.33758, 127.09032),
+        new kakao.maps.LatLng(37.33828, 127.09228),
+        new kakao.maps.LatLng(37.33842, 127.09315),
+        new kakao.maps.LatLng(37.33971, 127.09495),
+        new kakao.maps.LatLng(37.34081, 127.09529),
+        new kakao.maps.LatLng(37.34153, 127.09607),
+        new kakao.maps.LatLng(37.34266, 127.09718),
+        new kakao.maps.LatLng(37.34286, 127.09750)
+      ]
+    },{ // 30분
+      name : '탄천',
+      path : [
+        new kakao.maps.LatLng(37.32395, 127.10522),
+        new kakao.maps.LatLng(37.32393, 127.10555),
+        new kakao.maps.LatLng(37.32375, 127.10657),
+        new kakao.maps.LatLng(37.32372, 127.10690),
+        new kakao.maps.LatLng(37.32384, 127.10778),
+        new kakao.maps.LatLng(37.32423, 127.10992),
+        new kakao.maps.LatLng(37.32446, 127.11087),
+        new kakao.maps.LatLng(37.32581, 127.11108),
+        new kakao.maps.LatLng(37.32729, 127.11082),
+        new kakao.maps.LatLng(37.32839, 127.11114),
+        new kakao.maps.LatLng(37.33136, 127.11292),
+        new kakao.maps.LatLng(37.33415, 127.11284),
+        new kakao.maps.LatLng(37.33563, 127.11248)
+      ]
+    }, { // 45분
+      name : '정평천',
+      path : [
+        new kakao.maps.LatLng(37.33041, 127.06519),
+        new kakao.maps.LatLng(37.33011, 127.06570),
+        new kakao.maps.LatLng(37.32986, 127.06574),
+        new kakao.maps.LatLng(37.32910, 127.06563),
+        new kakao.maps.LatLng(37.32894, 127.06569),
+        new kakao.maps.LatLng(37.32874, 127.06585),
+        new kakao.maps.LatLng(37.32830, 127.06641),
+        new kakao.maps.LatLng(37.32744, 127.06748),
+        new kakao.maps.LatLng(37.32662, 127.06859),
+        new kakao.maps.LatLng(37.32646, 127.06883),
+        new kakao.maps.LatLng(37.32611, 127.06937),
+        new kakao.maps.LatLng(37.32574, 127.06989),
+        new kakao.maps.LatLng(37.32555, 127.07024),
+        new kakao.maps.LatLng(37.32455, 127.07223),
+        new kakao.maps.LatLng(37.32469, 127.07235),
+        new kakao.maps.LatLng(37.32456, 127.07257),
+        new kakao.maps.LatLng(37.32444, 127.07288),
+        new kakao.maps.LatLng(37.32436, 127.07336),
+        new kakao.maps.LatLng(37.32433, 127.07426),
+        new kakao.maps.LatLng(37.32422, 127.07574),
+        new kakao.maps.LatLng(37.32414, 127.07642),
+        new kakao.maps.LatLng(37.32401, 127.07705),
+        new kakao.maps.LatLng(37.32388, 127.07782),
+        new kakao.maps.LatLng(37.32383, 127.07815),
+        new kakao.maps.LatLng(37.32373, 127.07848),
+        new kakao.maps.LatLng(37.32354, 127.07877),
+        new kakao.maps.LatLng(37.32317, 127.07910),
+        new kakao.maps.LatLng(37.32212, 127.07979),
+        new kakao.maps.LatLng(37.32178, 127.08023),
+        new kakao.maps.LatLng(37.32163, 127.08050),
+        new kakao.maps.LatLng(37.32145, 127.08127),
+        new kakao.maps.LatLng(37.32129, 127.08236),
+        new kakao.maps.LatLng(37.32107, 127.08424),
+        new kakao.maps.LatLng(37.32084, 127.08542),
+        new kakao.maps.LatLng(37.32054, 127.08651),
+        new kakao.maps.LatLng(37.32046, 127.08706),
+        new kakao.maps.LatLng(37.32031, 127.08762),
+        new kakao.maps.LatLng(37.31922, 127.09070),
+        new kakao.maps.LatLng(37.31884, 127.09168),
+        new kakao.maps.LatLng(37.31869, 127.09217),
+        new kakao.maps.LatLng(37.31867, 127.09249),
+        new kakao.maps.LatLng(37.31871, 127.09280),
+        new kakao.maps.LatLng(37.31853, 127.09285),
+        new kakao.maps.LatLng(37.31875, 127.09337),
+        new kakao.maps.LatLng(37.31931, 127.09434),
+        new kakao.maps.LatLng(37.31916, 127.09472),
+        new kakao.maps.LatLng(37.31880, 127.09578),
+        new kakao.maps.LatLng(37.31866, 127.09580),
+        new kakao.maps.LatLng(37.31860, 127.09616)
+      ]
+    }, { // 60분
+      name : '성복천',
+      path : [
+        new kakao.maps.LatLng(37.31684, 127.06902),
+        new kakao.maps.LatLng(37.31656, 127.07011),
+        new kakao.maps.LatLng(37.31604, 127.07126),
+        new kakao.maps.LatLng(37.31587, 127.07171),
+        new kakao.maps.LatLng(37.31509, 127.07484),
+        new kakao.maps.LatLng(37.31510, 127.07536),
+        new kakao.maps.LatLng(37.31521, 127.07622),
+        new kakao.maps.LatLng(37.31523, 127.07761),
+        new kakao.maps.LatLng(37.31522, 127.07798),
+        new kakao.maps.LatLng(37.31428, 127.08082),
+        new kakao.maps.LatLng(37.31388, 127.08214),
+        new kakao.maps.LatLng(37.31378, 127.08298),
+        new kakao.maps.LatLng(37.31382, 127.08358),
+        new kakao.maps.LatLng(37.31404, 127.08449),
+        new kakao.maps.LatLng(37.31391, 127.08454),
+        new kakao.maps.LatLng(37.31419, 127.08548),
+        new kakao.maps.LatLng(37.31422, 127.08602),
+        new kakao.maps.LatLng(37.31433, 127.08631),
+        new kakao.maps.LatLng(37.31439, 127.08697),
+        new kakao.maps.LatLng(37.31435, 127.08849),
+        new kakao.maps.LatLng(37.31426, 127.08872),
+        new kakao.maps.LatLng(37.31430, 127.08908),
+        new kakao.maps.LatLng(37.31432, 127.09055),
+        new kakao.maps.LatLng(37.31437, 127.09104),
+        new kakao.maps.LatLng(37.31445, 127.09134),
+        new kakao.maps.LatLng(37.31455, 127.09154),
+        new kakao.maps.LatLng(37.31504, 127.09199),
+        new kakao.maps.LatLng(37.31628, 127.09260),
+        new kakao.maps.LatLng(37.31860, 127.09616),
+        new kakao.maps.LatLng(37.31886, 127.09648),
+        new kakao.maps.LatLng(37.32044, 127.09762),
+        new kakao.maps.LatLng(37.32079, 127.09794),
+        new kakao.maps.LatLng(37.32102, 127.09808),
+        new kakao.maps.LatLng(37.32125, 127.09833),
+        new kakao.maps.LatLng(37.32141, 127.09853),
+        new kakao.maps.LatLng(37.32171, 127.09924),
+        new kakao.maps.LatLng(37.32194, 127.10106),
+        new kakao.maps.LatLng(37.32205, 127.10158),
+        new kakao.maps.LatLng(37.32256, 127.10195),
+        new kakao.maps.LatLng(37.32336, 127.10378),
+        new kakao.maps.LatLng(37.32355, 127.10397),
+        new kakao.maps.LatLng(37.32376, 127.10441),
+        new kakao.maps.LatLng(37.32391, 127.10483),
+        new kakao.maps.LatLng(37.32395, 127.10522),
+        new kakao.maps.LatLng(37.32393, 127.10555),
+        new kakao.maps.LatLng(37.32375, 127.10657),
+        new kakao.maps.LatLng(37.32372, 127.10690),
+        new kakao.maps.LatLng(37.32384, 127.10778),
+        new kakao.maps.LatLng(37.32423, 127.10992)
+
+      ]
+    },
+    // 왕복
+    { // 15분
+      name : '탄천',
+      path : [
+        new kakao.maps.LatLng(37.32395, 127.10522),
+        new kakao.maps.LatLng(37.32393, 127.10555),
+        new kakao.maps.LatLng(37.32375, 127.10657),
+        new kakao.maps.LatLng(37.32372, 127.10690),
+        new kakao.maps.LatLng(37.32384, 127.10778),
+        new kakao.maps.LatLng(37.32423, 127.10992),
+        new kakao.maps.LatLng(37.32446, 127.11087)
+      ]
+    },{ // 30분
+      name : '손곡천',
+      path : [
+        new kakao.maps.LatLng(37.33745, 127.08726),
+        new kakao.maps.LatLng(37.33771, 127.08824),
+        new kakao.maps.LatLng(37.33746, 127.08960),
+        new kakao.maps.LatLng(37.33758, 127.09032),
+        new kakao.maps.LatLng(37.33828, 127.09228),
+        new kakao.maps.LatLng(37.33842, 127.09315),
+        new kakao.maps.LatLng(37.33971, 127.09495),
+        new kakao.maps.LatLng(37.34081, 127.09529),
+        new kakao.maps.LatLng(37.34153, 127.09607),
+        new kakao.maps.LatLng(37.34266, 127.09718),
+        new kakao.maps.LatLng(37.34286, 127.09750)
+      ]
+    },{ // 45분
+      name : '탄천',
+      path : [
+        new kakao.maps.LatLng(37.32423, 127.10992),
+        new kakao.maps.LatLng(37.32446, 127.11087),
+        new kakao.maps.LatLng(37.32581, 127.11108),
+        new kakao.maps.LatLng(37.32729, 127.11082),
+        new kakao.maps.LatLng(37.32839, 127.11114),
+        new kakao.maps.LatLng(37.33136, 127.11292),
+        new kakao.maps.LatLng(37.33415, 127.11284),
+        new kakao.maps.LatLng(37.33563, 127.11248)
+      ]
+    }, { // 60분
+      name : '정평천',
+      path : [
+        new kakao.maps.LatLng(37.32422, 127.07574),
+        new kakao.maps.LatLng(37.32414, 127.07642),
+        new kakao.maps.LatLng(37.32401, 127.07705),
+        new kakao.maps.LatLng(37.32388, 127.07782),
+        new kakao.maps.LatLng(37.32383, 127.07815),
+        new kakao.maps.LatLng(37.32373, 127.07848),
+        new kakao.maps.LatLng(37.32354, 127.07877),
+        new kakao.maps.LatLng(37.32317, 127.07910),
+        new kakao.maps.LatLng(37.32212, 127.07979),
+        new kakao.maps.LatLng(37.32178, 127.08023),
+        new kakao.maps.LatLng(37.32163, 127.08050),
+        new kakao.maps.LatLng(37.32145, 127.08127),
+        new kakao.maps.LatLng(37.32129, 127.08236),
+        new kakao.maps.LatLng(37.32107, 127.08424),
+        new kakao.maps.LatLng(37.32084, 127.08542),
+        new kakao.maps.LatLng(37.32054, 127.08651),
+        new kakao.maps.LatLng(37.32046, 127.08706),
+        new kakao.maps.LatLng(37.32031, 127.08762),
+        new kakao.maps.LatLng(37.31922, 127.09070),
+        new kakao.maps.LatLng(37.31884, 127.09168),
+        new kakao.maps.LatLng(37.31869, 127.09217),
+        new kakao.maps.LatLng(37.31867, 127.09249),
+        new kakao.maps.LatLng(37.31871, 127.09280),
+        new kakao.maps.LatLng(37.31853, 127.09285),
+        new kakao.maps.LatLng(37.31875, 127.09337),
+        new kakao.maps.LatLng(37.31931, 127.09434),
+        new kakao.maps.LatLng(37.31916, 127.09472),
+        new kakao.maps.LatLng(37.31880, 127.09578),
+        new kakao.maps.LatLng(37.31866, 127.09580),
+        new kakao.maps.LatLng(37.31860, 127.09616)
+
+      ]
+    },// 기흥구
+    // 편도
+    { // 15분
+      name : '공세천',
+      path : [
+        new kakao.maps.LatLng(37.23184, 127.10661),
+        new kakao.maps.LatLng(37.23181, 127.10775),
+        new kakao.maps.LatLng(37.23178, 127.10834),
+        new kakao.maps.LatLng(37.23169, 127.10885),
+        new kakao.maps.LatLng(37.23188, 127.10890),
+        new kakao.maps.LatLng(37.23151, 127.11074),
+        new kakao.maps.LatLng(37.23151, 127.11243),
+        new kakao.maps.LatLng(37.23149, 127.11359),
+        new kakao.maps.LatLng(37.23145, 127.11411),
+        new kakao.maps.LatLng(37.23134, 127.11490),
+        new kakao.maps.LatLng(37.23099, 127.11581),
+        new kakao.maps.LatLng(37.23090, 127.11678),
+        new kakao.maps.LatLng(37.23033, 127.11812)
+      ]
+    },{ // 30분
+      name : '지곡천',
+      path : [
+        new kakao.maps.LatLng(37.25483, 127.12613),
+        new kakao.maps.LatLng(37.25449, 127.12663),
+        new kakao.maps.LatLng(37.25409, 127.12710),
+        new kakao.maps.LatLng(37.25366, 127.12762),
+        new kakao.maps.LatLng(37.25337, 127.12789),
+        new kakao.maps.LatLng(37.25310, 127.12810),
+        new kakao.maps.LatLng(37.25246, 127.12842),
+        new kakao.maps.LatLng(37.25202, 127.12859),
+        new kakao.maps.LatLng(37.25167, 127.12882),
+        new kakao.maps.LatLng(37.25147, 127.12901),
+        new kakao.maps.LatLng(37.25085, 127.12958),
+        new kakao.maps.LatLng(37.25073, 127.12972),
+        new kakao.maps.LatLng(37.24996, 127.13010),
+        new kakao.maps.LatLng(37.24931, 127.13026),
+        new kakao.maps.LatLng(37.24894, 127.13032),
+        new kakao.maps.LatLng(37.24833, 127.13033),
+        new kakao.maps.LatLng(37.24804, 127.13042),
+        new kakao.maps.LatLng(37.24758, 127.13073),
+        new kakao.maps.LatLng(37.24724, 127.13116),
+        new kakao.maps.LatLng(37.24676, 127.13158),
+        new kakao.maps.LatLng(37.24627, 127.13186),
+        new kakao.maps.LatLng(37.24518, 127.13190),
+        new kakao.maps.LatLng(37.24421, 127.13188),
+        new kakao.maps.LatLng(37.24365, 127.13197),
+        new kakao.maps.LatLng(37.24343, 127.13202),
+        new kakao.maps.LatLng(37.24252, 127.13194),
+        new kakao.maps.LatLng(37.24192, 127.13224),
+        new kakao.maps.LatLng(37.24148, 127.13267),
+        new kakao.maps.LatLng(37.24103, 127.13295),
+        new kakao.maps.LatLng(37.24079, 127.13310),
+        new kakao.maps.LatLng(37.24037, 127.13370),
+        new kakao.maps.LatLng(37.24031, 127.13419)
+      ]
+    }, { // 45분
+      name : '신갈천',
+      path : [
+        new kakao.maps.LatLng(37.27532, 127.11950),
+        new kakao.maps.LatLng(37.27491, 127.12034),
+        new kakao.maps.LatLng(37.27244, 127.12326),
+        new kakao.maps.LatLng(37.26973, 127.12613),
+        new kakao.maps.LatLng(37.26804, 127.12903),
+        new kakao.maps.LatLng(37.26729, 127.13335),
+        new kakao.maps.LatLng(37.26743, 127.13399),
+        new kakao.maps.LatLng(37.26768, 127.13412),
+        new kakao.maps.LatLng(37.26898, 127.13504),
+        new kakao.maps.LatLng(37.26945, 127.13580),
+        new kakao.maps.LatLng(37.26982, 127.13729),
+        new kakao.maps.LatLng(37.27039, 127.13767),
+        new kakao.maps.LatLng(37.27222, 127.13827),
+        new kakao.maps.LatLng(37.27336, 127.13913),
+        new kakao.maps.LatLng(37.27404, 127.14065),
+        new kakao.maps.LatLng(37.27521, 127.14402),
+        new kakao.maps.LatLng(37.27531, 127.14746)
+      ]
+    }, { // 60분
+      name : '탄천',
+      path : [
+        new kakao.maps.LatLng(37.32446, 127.11087),
+        new kakao.maps.LatLng(37.32337, 127.11024),
+        new kakao.maps.LatLng(37.32329, 127.11014),
+        new kakao.maps.LatLng(37.32301, 127.10992),
+        new kakao.maps.LatLng(37.32224, 127.10908),
+        new kakao.maps.LatLng(37.32188, 127.10886),
+        new kakao.maps.LatLng(37.32184, 127.10877),
+        new kakao.maps.LatLng(37.32123, 127.10805),
+        new kakao.maps.LatLng(37.32035, 127.10622),
+        new kakao.maps.LatLng(37.32012, 127.10585),
+        new kakao.maps.LatLng(37.31983, 127.10555),
+        new kakao.maps.LatLng(37.31894, 127.10503),
+        new kakao.maps.LatLng(37.31750, 127.10495),
+        new kakao.maps.LatLng(37.31535, 127.10498),
+        new kakao.maps.LatLng(37.31486, 127.10494),
+        new kakao.maps.LatLng(37.31429, 127.10480),
+        new kakao.maps.LatLng(37.31301, 127.10464),
+        new kakao.maps.LatLng(37.31216, 127.10431),
+        new kakao.maps.LatLng(37.31190, 127.10428),
+        new kakao.maps.LatLng(37.31110, 127.10428),
+        new kakao.maps.LatLng(37.31060, 127.10431),
+        new kakao.maps.LatLng(37.30967, 127.10433),
+        new kakao.maps.LatLng(37.30841, 127.10422),
+        new kakao.maps.LatLng(37.30793, 127.10431),
+        new kakao.maps.LatLng(37.30737, 127.10435),
+        new kakao.maps.LatLng(37.30574, 127.10432),
+        new kakao.maps.LatLng(37.30507, 127.10439),
+        new kakao.maps.LatLng(37.30469, 127.10436),
+        new kakao.maps.LatLng(37.30377, 127.10437),
+        new kakao.maps.LatLng(37.30288, 127.10433),
+        new kakao.maps.LatLng(37.30267, 127.10440),
+        new kakao.maps.LatLng(37.30203, 127.10509),
+        new kakao.maps.LatLng(37.30115, 127.10598),
+        new kakao.maps.LatLng(37.29864, 127.10712),
+        new kakao.maps.LatLng(37.29854, 127.10687),
+        new kakao.maps.LatLng(37.29814, 127.10708),
+        new kakao.maps.LatLng(37.29736, 127.10764),
+        new kakao.maps.LatLng(37.29704, 127.10778),
+        new kakao.maps.LatLng(37.29590, 127.10865),
+        new kakao.maps.LatLng(37.29572, 127.10886),
+        new kakao.maps.LatLng(37.29560, 127.10906),
+        new kakao.maps.LatLng(37.29548, 127.10934),
+        new kakao.maps.LatLng(37.29544, 127.10950),
+        new kakao.maps.LatLng(37.29530, 127.10969),
+        new kakao.maps.LatLng(37.29508, 127.11033),
+        new kakao.maps.LatLng(37.29489, 127.11078)
+      ]
+    },
+    // 왕복
+    { // 15분
+      name : '탄천',
+      path : [
+        new kakao.maps.LatLng(37.29337, 127.14962),
+        new kakao.maps.LatLng(37.29364, 127.15057),
+        new kakao.maps.LatLng(37.29393, 127.15120),
+        new kakao.maps.LatLng(37.29411, 127.15137),
+        new kakao.maps.LatLng(37.29450, 127.15199),
+        new kakao.maps.LatLng(37.29487, 127.15281),
+        new kakao.maps.LatLng(37.29527, 127.15381),
+        new kakao.maps.LatLng(37.29551, 127.15421),
+        new kakao.maps.LatLng(37.29571, 127.15443),
+        new kakao.maps.LatLng(37.29587, 127.15460)
+      ]
+    },{ // 30분
+      name : '지곡천',
+      path : [
+        new kakao.maps.LatLng(37.25528, 127.09677),
+        new kakao.maps.LatLng(37.25321, 127.10357),
+        new kakao.maps.LatLng(37.25319, 127.10419),
+        new kakao.maps.LatLng(37.25412, 127.10767)
+      ]
+    },{ // 45분
+      name : '상하천',
+      path : [
+        new kakao.maps.LatLng(37.26743, 127.13399),
+        new kakao.maps.LatLng(37.26659, 127.13499),
+        new kakao.maps.LatLng(37.26569, 127.13527),
+        new kakao.maps.LatLng(37.26442, 127.13630),
+        new kakao.maps.LatLng(37.26311, 127.13708),
+        new kakao.maps.LatLng(37.26269, 127.13747),
+        new kakao.maps.LatLng(37.26223, 127.13822),
+        new kakao.maps.LatLng(37.26187, 127.13834),
+        new kakao.maps.LatLng(37.26132, 127.13888),
+        new kakao.maps.LatLng(37.26102, 127.13938),
+        new kakao.maps.LatLng(37.26076, 127.13964),
+        new kakao.maps.LatLng(37.25960, 127.14007),
+        new kakao.maps.LatLng(37.25943, 127.14008),
+        new kakao.maps.LatLng(37.25841, 127.14054),
+        new kakao.maps.LatLng(37.25815, 127.14115),
+        new kakao.maps.LatLng(37.25687, 127.14220)
+      ]
+    }, { // 60분
+      name : '탄천',
+      path : [
+        new kakao.maps.LatLng(37.29081, 127.12744),
+        new kakao.maps.LatLng(37.29113, 127.12805),
+        new kakao.maps.LatLng(37.29167, 127.12937),
+        new kakao.maps.LatLng(37.29165, 127.13039),
+        new kakao.maps.LatLng(37.29131, 127.13095),
+        new kakao.maps.LatLng(37.29072, 127.13209),
+        new kakao.maps.LatLng(37.29001, 127.13308),
+        new kakao.maps.LatLng(37.28984, 127.13353),
+        new kakao.maps.LatLng(37.28983, 127.13390),
+        new kakao.maps.LatLng(37.29001, 127.13455),
+        new kakao.maps.LatLng(37.29026, 127.13567),
+        new kakao.maps.LatLng(37.29029, 127.13631),
+        new kakao.maps.LatLng(37.29022, 127.13676),
+        new kakao.maps.LatLng(37.29005, 127.13715),
+        new kakao.maps.LatLng(37.28997, 127.13741),
+        new kakao.maps.LatLng(37.28998, 127.13794),
+        new kakao.maps.LatLng(37.29002, 127.13817),
+        new kakao.maps.LatLng(37.29001, 127.13879),
+        new kakao.maps.LatLng(37.28999, 127.13906),
+        new kakao.maps.LatLng(37.28999, 127.13929),
+        new kakao.maps.LatLng(37.29006, 127.13964),
+        new kakao.maps.LatLng(37.29016, 127.13992),
+        new kakao.maps.LatLng(37.29019, 127.14018),
+        new kakao.maps.LatLng(37.29017, 127.14048),
+        new kakao.maps.LatLng(37.29010, 127.14076),
+        new kakao.maps.LatLng(37.29012, 127.14095),
+        new kakao.maps.LatLng(37.29011, 127.14118),
+        new kakao.maps.LatLng(37.28976, 127.14194),
+        new kakao.maps.LatLng(37.28973, 127.14211),
+        new kakao.maps.LatLng(37.28973, 127.14238),
+        new kakao.maps.LatLng(37.28987, 127.14309),
+        new kakao.maps.LatLng(37.29028, 127.14416),
+        new kakao.maps.LatLng(37.29039, 127.14409),
+        new kakao.maps.LatLng(37.29065, 127.14453),
+        new kakao.maps.LatLng(37.29107, 127.14526),
+        new kakao.maps.LatLng(37.29212, 127.14687),
+        new kakao.maps.LatLng(37.29257, 127.14753),
+        new kakao.maps.LatLng(37.29270, 127.14784)
+      ]
+    }, // 처인구
+    // 편도
+    { // 15분
+      name : '신대천',
+      path : [
+        new kakao.maps.LatLng(37.28725, 127.21727),
+        new kakao.maps.LatLng(37.28617, 127.21931),
+        new kakao.maps.LatLng(37.28488, 127.22066),
+        new kakao.maps.LatLng(37.28268, 127.22380),
+        new kakao.maps.LatLng(37.28220, 127.22465),
+        new kakao.maps.LatLng(37.28144, 127.22643),
+        new kakao.maps.LatLng(37.28080, 127.22713),
+        new kakao.maps.LatLng(37.28030, 127.22807)
+      ]
+    },{ // 30분
+      name : '대대천',
+      path : [
+        new kakao.maps.LatLng(37.25366, 127.21880),
+        new kakao.maps.LatLng(37.25370, 127.21979),
+        new kakao.maps.LatLng(37.25215, 127.22281),
+        new kakao.maps.LatLng(37.24923, 127.23056),
+        new kakao.maps.LatLng(37.24922, 127.23135),
+        new kakao.maps.LatLng(37.25068, 127.23328),
+        new kakao.maps.LatLng(37.25163, 127.23519),
+        new kakao.maps.LatLng(37.25279, 127.23644),
+        new kakao.maps.LatLng(37.25370, 127.23736),
+        new kakao.maps.LatLng(37.25399, 127.23801)
+      ]
+    }, { // 45분
+      name : '금학천',
+      path : [
+        new kakao.maps.LatLng(37.23959, 127.17496),
+        new kakao.maps.LatLng(37.23945, 127.17711),
+        new kakao.maps.LatLng(37.24006, 127.18046),
+        new kakao.maps.LatLng(37.23999, 127.18081),
+        new kakao.maps.LatLng(37.23935, 127.18205),
+        new kakao.maps.LatLng(37.23859, 127.18597),
+        new kakao.maps.LatLng(37.23839, 127.18875),
+        new kakao.maps.LatLng(37.23825, 127.18935),
+        new kakao.maps.LatLng(37.23767, 127.19085),
+        new kakao.maps.LatLng(37.23714, 127.19373),
+        new kakao.maps.LatLng(37.23725, 127.19795),
+        new kakao.maps.LatLng(37.23712, 127.19951),
+        new kakao.maps.LatLng(37.23673, 127.20187),
+        new kakao.maps.LatLng(37.23642, 127.20181),
+        new kakao.maps.LatLng(37.23640, 127.20235),
+        new kakao.maps.LatLng(37.23681, 127.20379),
+        new kakao.maps.LatLng(37.23756, 127.20719),
+        new kakao.maps.LatLng(37.23758, 127.20852),
+        new kakao.maps.LatLng(37.23744, 127.20946)
+      ]
+    }, { // 60분
+      name : '경안천',
+      path : [
+        new kakao.maps.LatLng(37.23744, 127.20946),
+        new kakao.maps.LatLng(37.24008, 127.21142),
+        new kakao.maps.LatLng(37.24085, 127.21159),
+        new kakao.maps.LatLng(37.24221, 127.21202),
+        new kakao.maps.LatLng(37.24512, 127.21381),
+        new kakao.maps.LatLng(37.24914, 127.21450),
+        new kakao.maps.LatLng(37.25278, 127.21845),
+        new kakao.maps.LatLng(37.25366, 127.21880),
+        new kakao.maps.LatLng(37.26013, 127.21719),
+        new kakao.maps.LatLng(37.26356, 127.21475),
+        new kakao.maps.LatLng(37.26387, 127.21555),
+        new kakao.maps.LatLng(37.26544, 127.21426),
+        new kakao.maps.LatLng(37.26765, 127.21206),
+        new kakao.maps.LatLng(37.27056, 127.21115)
+      ]
+    },
+    // 왕복
+    { // 15분
+      name : '금어천',
+      path : [
+        new kakao.maps.LatLng(37.26544, 127.21426),
+        new kakao.maps.LatLng(37.26635, 127.22129)
+      ]
+    },{ // 30분
+      name : '금학천',
+      path : [
+        new kakao.maps.LatLng(37.23642, 127.20181),
+        new kakao.maps.LatLng(37.23640, 127.20235),
+        new kakao.maps.LatLng(37.23681, 127.20379),
+        new kakao.maps.LatLng(37.23756, 127.20719),
+        new kakao.maps.LatLng(37.23758, 127.20852),
+        new kakao.maps.LatLng(37.23744, 127.20946),
+        new kakao.maps.LatLng(37.23744, 127.20946),
+        new kakao.maps.LatLng(37.24008, 127.21142),
+        new kakao.maps.LatLng(37.24085, 127.21159)
+      ]
+    },{ // 45분
+      name : '경안천',
+      path : [
+        new kakao.maps.LatLng(37.22533, 127.22057),
+        new kakao.maps.LatLng(37.22605, 127.21812),
+        new kakao.maps.LatLng(37.22544, 127.21537),
+        new kakao.maps.LatLng(37.22668, 127.21203),
+        new kakao.maps.LatLng(37.22781, 127.21152),
+        new kakao.maps.LatLng(37.22832, 127.21172),
+        new kakao.maps.LatLng(37.22944, 127.21259),
+        new kakao.maps.LatLng(37.23221, 127.21173)
+      ]
+    }, { // 60분
+      name : '양지천',
+      path : [
+        new kakao.maps.LatLng(37.24085, 127.21159),
+        new kakao.maps.LatLng(37.23851, 127.21568),
+        new kakao.maps.LatLng(37.23642, 127.21639),
+        new kakao.maps.LatLng(37.23595, 127.21618),
+        new kakao.maps.LatLng(37.23540, 127.21868),
+        new kakao.maps.LatLng(37.23397, 127.22123),
+        new kakao.maps.LatLng(37.23368, 127.22236),
+        new kakao.maps.LatLng(37.23397, 127.22431),
+        new kakao.maps.LatLng(37.23411, 127.22614),
+        new kakao.maps.LatLng(37.23540, 127.23013)
+      ]
+    }
+  ];
+  var polyline;
+  var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+          mapOption = {
+            center: new kakao.maps.LatLng(37.322025327756, 127.09791279434), // 지도의 중심좌표
+            level: 4 // 지도의 확대 레벨
+          };
+  // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
+  var map = new kakao.maps.Map(mapContainer, mapOption),
+          customOverlay = new kakao.maps.CustomOverlay({}),
+          infowindow = new kakao.maps.InfoWindow({removable: true});
+
+  // 라인을 생성하고 이벤트를 등록하는 함수입니다
+  function displayArea(area) {
+    // 라인을 생성합니다
+    polyline = new kakao.maps.Polyline({
+      map: map, // 선을 표시할 지도 객체
+      path: area.path, // 선을 구성하는 좌표배열 입니다
+      strokeWeight: 7, // 선의 두께 입니다
+      strokeColor: '#046DDD', // 선의 색깔입니다
+      strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+      strokeStyle: 'solid' // 선의 스타일입니다
+    });
+
+    // 선에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+    var mouseoverOption = {
+      strokeWeight: 12, // 선의 두께 입니다
+      strokeOpacity: 1 // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+    };
+
+    // 선에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+    var mouseoutOption = {
+      strokeWeight: 7, // 선의 두께 입니다
+      strokeOpacity: 0.7 // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+    };
+
+    // 선에 mouseover 이벤트를 등록하고 이벤트가 발생하면 선의 두께 변경합니다
+    // 하천명을 표시하는 커스텀오버레이를 지도위에 표시합니다
+    kakao.maps.event.addListener(polyline, 'mouseover', function(mouseEvent) {
+      polyline.setOptions(mouseoverOption);
+      customOverlay.setContent('<div class="area">' + area.name + '</div>');
+      customOverlay.setPosition(mouseEvent.latLng);
+      customOverlay.setMap(map);
+    });
+
+    // 선에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다
+    kakao.maps.event.addListener(polyline, 'mousemove', function(mouseEvent) {
+
+      customOverlay.setPosition(mouseEvent.latLng);
+    });
+
+    // 선에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
+    // 커스텀 오버레이를 지도에서 제거합니다
+    kakao.maps.event.addListener(polyline, 'mouseout', function() {
+      polyline.setOptions(mouseoutOption);
+      customOverlay.setMap(null);
+    });
+
+    // 선에 click 이벤트를 등록하고 이벤트가 발생하면 선의 이름과 면적을 인포윈도우에 표시합니다
+    kakao.maps.event.addListener(polyline, 'click', function(mouseEvent) {
+      var distance = Math.round(polyline.getLength());
+      var walkkTime = distance / 67 | 0;
+      var walkHour = '', walkMin = '';
+
+      // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
+      if (walkkTime > 60) {
+        walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
+      }
+      walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
+
+      var content = '<div class="info">' +
+              '   <div class="title">' + area.name + '</div>' +
+              '   <div class="size">총 거리 ' + distance + 'm</div>' +
+              '   <div class="size">도보 ' +  walkHour + walkMin + '</div>';
+      infowindow.setContent(content);
+      infowindow.setPosition(mouseEvent.latLng);
+      infowindow.setMap(map);
+      map.panTo(mouseEvent.latLng);
+    });
+  }
+
+  // 선을 지도에서 제거하는 함수입니다
+  function deletePolyLine() {
+    if (polyline) {
+      polyline.setMap(null);
+      polyline = null;
+    }
+  }
+</script>
+</body>
+</html>

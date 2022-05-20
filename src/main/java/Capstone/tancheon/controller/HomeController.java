@@ -26,5 +26,30 @@ public class HomeController {
         return "cheoin";
     }
 
+    @GetMapping(value = "/dong_s")
+    public String dong_s() {
+        return "dong_s";
+    }
+
+    @GetMapping(value = "/dong_g")
+    public String dong_g() {
+        return "dong_g";
+    }
+
+    @GetMapping(value = "/dong_c")
+    public String dong_c() {
+        return "dong_c";
+    }
+
+    @GetMapping(value = "/recommend")
+    public String recommend() {
+        return "recommend";
+    }
+
+    @GetMapping(value = "/findway")
+    public String findway() {
+        return "findway";
+    }
+
 }
 

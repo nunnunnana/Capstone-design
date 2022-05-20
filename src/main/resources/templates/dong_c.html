@@ -5,6 +5,12 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
+    <style>
+        .clicked {
+            color:white;
+            background-color: dodgerblue;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -21,26 +27,58 @@
     <button class="button btn1" onclick="location.href='/cheoin'">처인구</button>
 </div>
 <div>
-    <button class="button" onclick="location.href='/dong_c'">삼가동</button>
-    <button class="button" onclick="location.href='/dong_c'">역북동</button>
-    <button class="button" onclick="location.href='/dong_c'">김량장동</button>
-    <button class="button" onclick="location.href='/dong_c'">마평동</button>
-    <button class="button" onclick="location.href='/dong_c'">유방동</button>
-    <button class="button" onclick="location.href='/dong_c'">고림동</button>
-    <button class="button" onclick="location.href='/dong_c'">둔전리</button>
-    <button class="button" onclick="location.href='/dong_c'">전대리</button>
-    <button class="button" onclick="location.href='/dong_c'">삼계리</button>
+    <button class="button" onclick='search_area()'>삼가동</button>
+    <button class="button" onclick='search_area()'>역북동</button>
+    <button class="button" onclick='search_area()'>김량장동</button>
+    <button class="button" onclick='search_area()'>마평동</button>
+    <button class="button" onclick='search_area()'>유방동</button>
+    <button class="button" onclick='search_area()'>고림동</button>
+    <button class="button" onclick='search_area()'>둔전리</button>
+    <button class="button" onclick='search_area()'>전대리</button>
+    <button class="button" onclick='search_area()'>삼계리</button>
 </div>
 <div id="map" style="width:100%;height:800px;"></div>
 <script>
+    function search_area() {
+        let button = document.getElementsByClassName("button");
+        for (let i = 0; i < button.length; i++) {
+            button[i].classList.remove("clicked");
+        }
+        event.target.classList.add("clicked");
+        const clicked = document.getElementsByClassName("clicked");
+        infowindow.setMap(null);
+        deletePolyLine();
+        let i = null;
+        if(clicked[0].textContent === '삼가동') i = 0;
+        else if(clicked[0].textContent === '역북동') i = 1;
+        else if(clicked[0].textContent === '김량장동') i = 2;
+        else if(clicked[0].textContent === '마평동') i = 3;
+        else if(clicked[0].textContent === '유방동') i = 4;
+        else if(clicked[0].textContent === '고림동') i = 5;
+        else if(clicked[0].textContent === '둔전리') i = 6;
+        else if(clicked[0].textContent === '전대리') i = 7;
+        else if(clicked[0].textContent === '삼계리') i = 8;
+
+        displayArea(areas[i]);
+        var n = areas[i].path.length;
+        var moveLatLng = areas[i].path[parseInt(n/2)];
+        map.panTo(moveLatLng);
+    }
+</script>
+<script>
     var areas = [
-        // 처인구
+        // 삼가동
         {
             name : '금학천',
             path : [
                 new kakao.maps.LatLng(37.23959, 127.17496),
                 new kakao.maps.LatLng(37.23945, 127.17711),
                 new kakao.maps.LatLng(37.24006, 127.18046),
+                new kakao.maps.LatLng(37.23999, 127.18081)
+            ]
+        }, { // 역북동
+            name : '금학천',
+            path : [
                 new kakao.maps.LatLng(37.23999, 127.18081),
                 new kakao.maps.LatLng(37.23935, 127.18205),
                 new kakao.maps.LatLng(37.23859, 127.18597),
@@ -48,6 +86,11 @@
                 new kakao.maps.LatLng(37.23825, 127.18935),
                 new kakao.maps.LatLng(37.23767, 127.19085),
                 new kakao.maps.LatLng(37.23714, 127.19373),
+                new kakao.maps.LatLng(37.23725, 127.19795)
+            ]
+        }, { // 김량장동
+            name : '금학천',
+            path : [
                 new kakao.maps.LatLng(37.23725, 127.19795),
                 new kakao.maps.LatLng(37.23712, 127.19951),
                 new kakao.maps.LatLng(37.23673, 127.20187),
@@ -56,53 +99,23 @@
                 new kakao.maps.LatLng(37.23681, 127.20379),
                 new kakao.maps.LatLng(37.23756, 127.20719),
                 new kakao.maps.LatLng(37.23758, 127.20852),
-                new kakao.maps.LatLng(37.23744, 127.20946)
-            ]
-        },{
-            name : '경안천',
-            path : [
-                new kakao.maps.LatLng(37.22533, 127.22057),
-                new kakao.maps.LatLng(37.22605, 127.21812),
-                new kakao.maps.LatLng(37.22544, 127.21537),
-                new kakao.maps.LatLng(37.22668, 127.21203),
-                new kakao.maps.LatLng(37.22781, 127.21152),
-                new kakao.maps.LatLng(37.22832, 127.21172),
-                new kakao.maps.LatLng(37.22944, 127.21259),
-                new kakao.maps.LatLng(37.23221, 127.21173),
-                new kakao.maps.LatLng(37.23382, 127.21009),
-                new kakao.maps.LatLng(37.23470, 127.20969),
                 new kakao.maps.LatLng(37.23744, 127.20946),
-                new kakao.maps.LatLng(37.24008, 127.21142),
-                new kakao.maps.LatLng(37.24085, 127.21159),
-                new kakao.maps.LatLng(37.24221, 127.21202),
-                new kakao.maps.LatLng(37.24512, 127.21381),
-                new kakao.maps.LatLng(37.24914, 127.21450),
-                new kakao.maps.LatLng(37.25278, 127.21845),
-                new kakao.maps.LatLng(37.25366, 127.21880),
-                new kakao.maps.LatLng(37.26013, 127.21719),
-                new kakao.maps.LatLng(37.26356, 127.21475),
-                new kakao.maps.LatLng(37.26387, 127.21555),
-                new kakao.maps.LatLng(37.26544, 127.21426),
-                new kakao.maps.LatLng(37.26765, 127.21206),
-                new kakao.maps.LatLng(37.27056, 127.21115),
-                new kakao.maps.LatLng(37.27456, 127.21549),
-                new kakao.maps.LatLng(37.27706, 127.21886),
-                new kakao.maps.LatLng(37.27841, 127.22179),
-                new kakao.maps.LatLng(37.27883, 127.22536),
-                new kakao.maps.LatLng(37.27969, 127.22533),
-                new kakao.maps.LatLng(37.28030, 127.22807),
-                new kakao.maps.LatLng(37.28058, 127.22898),
-                new kakao.maps.LatLng(37.28378, 127.23053),
-                new kakao.maps.LatLng(37.28865, 127.23216),
-                new kakao.maps.LatLng(37.29160, 127.23370),
-                new kakao.maps.LatLng(37.29283, 127.23371),
-                new kakao.maps.LatLng(37.29868, 127.22954),
-                new kakao.maps.LatLng(37.29996, 127.22935),
-                new kakao.maps.LatLng(37.30348, 127.23087)
+                new kakao.maps.LatLng(37.23470, 127.20969),
+                new kakao.maps.LatLng(37.23382, 127.21009),
+                new kakao.maps.LatLng(37.23221, 127.21173),
+                new kakao.maps.LatLng(37.22944, 127.21259),
+                new kakao.maps.LatLng(37.22832, 127.21172),
+                new kakao.maps.LatLng(37.22781, 127.21152),
+                new kakao.maps.LatLng(37.22668, 127.21203),
+                new kakao.maps.LatLng(37.22544, 127.21537),
+                new kakao.maps.LatLng(37.22605, 127.21812),
+                new kakao.maps.LatLng(37.22533, 127.22057)
             ]
-        },{
+        }, { // 마평동
             name : '양지천',
             path : [
+                new kakao.maps.LatLng(37.23821, 127.20986),
+                new kakao.maps.LatLng(37.24008, 127.21142),
                 new kakao.maps.LatLng(37.24085, 127.21159),
                 new kakao.maps.LatLng(37.23851, 127.21568),
                 new kakao.maps.LatLng(37.23642, 127.21639),
@@ -121,7 +134,22 @@
                 new kakao.maps.LatLng(37.23047, 127.23867),
                 new kakao.maps.LatLng(37.22899, 127.24476)
             ]
-        },{
+        }, { // 유방동
+            name : '경안천',
+            path : [
+                new kakao.maps.LatLng(37.24008, 127.21142),
+                new kakao.maps.LatLng(37.24085, 127.21159),
+                new kakao.maps.LatLng(37.24221, 127.21202),
+                new kakao.maps.LatLng(37.24512, 127.21381),
+                new kakao.maps.LatLng(37.24914, 127.21450),
+                new kakao.maps.LatLng(37.25278, 127.21845),
+                new kakao.maps.LatLng(37.25366, 127.21880),
+                new kakao.maps.LatLng(37.26013, 127.21719),
+                new kakao.maps.LatLng(37.26356, 127.21475),
+                new kakao.maps.LatLng(37.26387, 127.21555),
+                new kakao.maps.LatLng(37.26544, 127.21426)
+            ]
+        }, { // 고림동
             name : '대대천',
             path : [
                 new kakao.maps.LatLng(37.25366, 127.21880),
@@ -135,15 +163,21 @@
                 new kakao.maps.LatLng(37.25370, 127.23736),
                 new kakao.maps.LatLng(37.25399, 127.23801)
             ]
-        },{
+        }, { // 둔전리
             name : '금어천',
             path : [
-                new kakao.maps.LatLng(37.26544, 127.21426),
-                new kakao.maps.LatLng(37.26635, 127.22129),
+                new kakao.maps.LatLng(37.26657, 127.22568),
                 new kakao.maps.LatLng(37.26619, 127.22134),
-                new kakao.maps.LatLng(37.26657, 127.22568)
+                new kakao.maps.LatLng(37.26635, 127.22129),
+                new kakao.maps.LatLng(37.26544, 127.21426),
+                new kakao.maps.LatLng(37.26765, 127.21206),
+                new kakao.maps.LatLng(37.27056, 127.21115),
+                new kakao.maps.LatLng(37.27456, 127.21549),
+                new kakao.maps.LatLng(37.27706, 127.21886),
+                new kakao.maps.LatLng(37.27841, 127.22179),
+                new kakao.maps.LatLng(37.27883, 127.22536)
             ]
-        },{
+        }, { // 전대리
             name : '신대천',
             path : [
                 new kakao.maps.LatLng(37.28725, 127.21727),
@@ -153,29 +187,39 @@
                 new kakao.maps.LatLng(37.28220, 127.22465),
                 new kakao.maps.LatLng(37.28144, 127.22643),
                 new kakao.maps.LatLng(37.28080, 127.22713),
-                new kakao.maps.LatLng(37.28030, 127.22807)
+                new kakao.maps.LatLng(37.28030, 127.22807),
+                new kakao.maps.LatLng(37.28030, 127.22807),
+                new kakao.maps.LatLng(37.27969, 127.22533)
+            ]
+        }, { // 삼계리
+            name : '경안천',
+            path : [
+                new kakao.maps.LatLng(37.28058, 127.22898),
+                new kakao.maps.LatLng(37.28378, 127.23053),
+                new kakao.maps.LatLng(37.28865, 127.23216),
+                new kakao.maps.LatLng(37.29160, 127.23370),
+                new kakao.maps.LatLng(37.29283, 127.23371),
+                new kakao.maps.LatLng(37.29868, 127.22954),
+                new kakao.maps.LatLng(37.29996, 127.22935),
+                new kakao.maps.LatLng(37.30348, 127.23087)
             ]
         }
     ];
+    var polyline;
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new kakao.maps.LatLng(37.234782211811, 127.20168096659), // 지도의 중심좌표
-            level: 6 // 지도의 확대 레벨
+            level: 4 // 지도의 확대 레벨
         };
     // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
     var map = new kakao.maps.Map(mapContainer, mapOption),
         customOverlay = new kakao.maps.CustomOverlay({}),
         infowindow = new kakao.maps.InfoWindow({removable: true});
 
-    for (var i = 0, len = areas.length; i < len; i++) {
-        displayArea(areas[i]);
-    }
-
     // 라인을 생성하고 이벤트를 등록하는 함수입니다
     function displayArea(area) {
-
         // 라인을 생성합니다
-        var polyline = new kakao.maps.Polyline({
+        polyline = new kakao.maps.Polyline({
             map: map, // 선을 표시할 지도 객체
             path: area.path, // 선을 구성하는 좌표배열 입니다
             strokeWeight: 7, // 선의 두께 입니다
@@ -239,7 +283,14 @@
             infowindow.setMap(map);
             map.panTo(mouseEvent.latLng);
         });
+    }
 
+    // 선을 지도에서 제거하는 함수입니다
+    function deletePolyLine() {
+        if (polyline) {
+            polyline.setMap(null);
+            polyline = null;
+        }
     }
 </script>
 </body>
