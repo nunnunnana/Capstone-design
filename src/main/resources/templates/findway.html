@@ -5,6 +5,46 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c493f11ea627a00a20fdbb661ac9e32"></script>
+    <style>
+        .btn {
+            display: inline-block;
+            width: 70px;
+            margin: 5px 10px 5px 0;
+            font-weight: 800;
+            text-align: center;
+            line-height: 50px;
+            border-radius: 5px;
+            border: none;
+            font-size: medium;
+            color: lightgray;
+            background-color: #F3F4F6;
+        }
+        .start:hover {
+            color:white;
+            background-color: #00C768;
+            cursor: pointer;
+        }
+        .end:hover {
+            color:white;
+            background-color: #F23F5C;
+            cursor: pointer;
+        }
+        .info-title {
+            display: inline-block;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            font-size: medium;
+            color: gray;
+            padding:4px 1px 4px 7px;
+
+        }
+        .info-btn {
+            display: inline-block;
+            text-align: center;
+            padding:4px 1px 4px 7px;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -30,7 +70,7 @@
     ];
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
-            center: new kakao.maps.LatLng(37.234782211811, 127.20168096659), // 지도의 중심좌표
+            center: new kakao.maps.LatLng(37.322025327756, 127.09791279434), // 지도의 중심좌표
             level: 6 // 지도의 확대 레벨
         };
     // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
@@ -40,6 +80,93 @@
 
     for (var i = 0, len = areas.length; i < len; i++) {
         displayArea(areas[i]);
+    }
+
+    // 마커를 표시할 위치와 title 객체 배열입니다
+    var positions = [{
+        title: '성복자이2차후문', latlng: new kakao.maps.LatLng(37.31843, 127.05767)
+    }, {title: '성복자이2차정문',latlng: new kakao.maps.LatLng(37.31907, 127.05997)
+    }, {title: '버들치마을 사거리',latlng: new kakao.maps.LatLng(37.31938, 127.06178)
+    }, {title: '힐스테이트3차정문',latlng: new kakao.maps.LatLng(37.31990, 127.06353)
+    }, {title: '성서초',latlng: new kakao.maps.LatLng(37.31961, 127.06443)
+    }, {title: '수지자이정류장',latlng: new kakao.maps.LatLng(37.31854, 127.06630)
+    }, {title: '성복4교',latlng: new kakao.maps.LatLng(37.31680, 127.06886)
+    }, {title: 'LG빌리지3차정문',latlng: new kakao.maps.LatLng(37.31568, 127.07253)
+    }, {title: '성복3교',latlng: new kakao.maps.LatLng(37.31515, 127.07461)
+    }, {title: '성복2교',latlng: new kakao.maps.LatLng(37.31521, 127.07655)
+    }, {title: '성복1교',latlng: new kakao.maps.LatLng(37.31510, 127.07843)
+    }, {title: '어청교',latlng: new kakao.maps.LatLng(37.31429, 127.08080)
+    }, {title: '정평2교',latlng: new kakao.maps.LatLng(37.31380, 127.08344)
+    }, {title: '정평교',latlng: new kakao.maps.LatLng(37.31425, 127.08515)
+    }, {title: '냇가소공원입구',latlng: new kakao.maps.LatLng(37.31430, 127.08969)
+    }, {title: '성원교',latlng: new kakao.maps.LatLng(37.31468, 127.09172)
+    }, {title: '풍덕천2교',latlng: new kakao.maps.LatLng(37.31858, 127.09561)
+    }, {title: '풍덕천교',latlng: new kakao.maps.LatLng(37.31900, 127.09376)
+    }, {title: '현대성우8단지입구',latlng: new kakao.maps.LatLng(37.31867, 127.09314)
+    }, {title: '신정마을9단지입구',latlng: new kakao.maps.LatLng(37.31872, 127.09283)
+    }, {title: '신촌3교',latlng: new kakao.maps.LatLng(37.31923, 127.09069)
+    }, {title: '풍덕천2동행정복지센터정류장',latlng: new kakao.maps.LatLng(37.31986, 127.08892)
+    }, {title: '신촌2교',latlng: new kakao.maps.LatLng(37.32044, 127.08720)
+    }, {title: '신촌1교',latlng: new kakao.maps.LatLng(37.32104, 127.08456)
+    }, {title: '정평2교',latlng: new kakao.maps.LatLng(37.32122, 127.08280)
+    }, {title: '신리초교삼거리',latlng: new kakao.maps.LatLng(37.32203, 127.07993)
+    }, {title: '정평3교',latlng: new kakao.maps.LatLng(37.32288, 127.07931)
+    }, {title: '신봉1교',latlng: new kakao.maps.LatLng(37.32395, 127.07749)
+    }, {title: '홍천2교',latlng: new kakao.maps.LatLng(37.32423, 127.07572)
+    }, {title: '수지LG5차삼거리',latlng: new kakao.maps.LatLng(37.32440, 127.07313)
+    }, {title: '신봉4교',latlng: new kakao.maps.LatLng(37.32531, 127.07071)
+    }, {title: '동일하이빌2단지입구',latlng: new kakao.maps.LatLng(37.32578, 127.06984)
+    }, {title: '신봉2교',latlng: new kakao.maps.LatLng(37.32784, 127.06702)
+    }, {title: '동부센트레빌사거리',latlng: new kakao.maps.LatLng(37.33039, 127.06525)
+    }, {title: '백설교',latlng: new kakao.maps.LatLng(37.32088, 127.09802)
+    }, {title: '롯데캐슬하이브엘정문',latlng: new kakao.maps.LatLng(37.32155, 127.09885)
+    }, {title: '풍덕천3교',latlng: new kakao.maps.LatLng(37.32261, 127.10210)
+    }, {title: '탄천교',latlng: new kakao.maps.LatLng(37.32306, 127.10313)
+    }, {title: '제2풍덕천교',latlng: new kakao.maps.LatLng(37.32376, 127.10442)
+    }, {title: '죽전역',latlng: new kakao.maps.LatLng(37.32375, 127.10659)
+    }, {title: '이마트죽전점입구',latlng: new kakao.maps.LatLng(37.32418, 127.10968)
+    }, {title: '탄천1교',latlng: new kakao.maps.LatLng(37.32436, 127.11046)
+    }, {title: '도담마을주공8단지정문',latlng: new kakao.maps.LatLng(37.32590, 127.11185)
+    }, {title: '죽전2교',latlng: new kakao.maps.LatLng(37.32531, 127.11100)
+    }, {title: '죽전삼거리',latlng: new kakao.maps.LatLng(37.32598, 127.11100)
+    }, {title: '죽전교',latlng: new kakao.maps.LatLng(37.32691, 127.11151)
+    }, {title: '현암마을대우넷씨빌정문',latlng: new kakao.maps.LatLng(37.32827, 127.11106)
+    }, {title: '죽전동성1차입구',latlng: new kakao.maps.LatLng(37.33023, 127.11210)
+    }, {title: '대지교',latlng: new kakao.maps.LatLng(37.33150, 127.11292)
+    }, {title: '죽전현대홈타운3차2단지후문',latlng: new kakao.maps.LatLng(37.33397, 127.11342)
+    }, {title: '현인마을e편한세상3차후문',latlng: new kakao.maps.LatLng(37.33467, 127.11272)
+    }];
+
+    for (var i = 0; i < positions.length; i ++) {
+        // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: map, // 마커를 표시할 지도
+            position: positions[i].latlng, // 마커를 표시할 위치
+            title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            clickable: true // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
+        });
+
+        // 마커를 클릭했을 때 마커 위에 표시할 인포윈도우를 생성합니다
+        var iwContent = '<div class="info-title">' + positions[i].title + '</div>' + '<div class="info-btn">' +
+                '<button class="btn start">출발</button><button class="btn end">도착</button>' +
+                '</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+            iwRemoveable = true; // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+        // 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({
+            content : iwContent,
+            removable : iwRemoveable
+        });
+        infowindow.close();
+        // 마커에 클릭이벤트를 등록합니다
+        kakao.maps.event.addListener(marker, 'click', makeOverListener(map, marker, infowindow));
+    }
+
+    // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
+    function makeOverListener(map, marker, infowindow) {
+        return function() {
+            infowindow.open(map, marker);
+        };
     }
 
     // 라인을 생성하고 이벤트를 등록하는 함수입니다
