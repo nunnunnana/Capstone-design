@@ -51,5 +51,10 @@ public class HomeController {
         return "findway";
     }
 
+    @GetMapping(value = "/springhome")
+    public String springhome() {
+        return "springhome";
+    }
+
 }
 
