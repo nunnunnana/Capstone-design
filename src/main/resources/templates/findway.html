@@ -56,62 +56,12 @@
 <hr>
 <div id="map"></div>
 <script>
-    /*var areas = [
-        // 처인구
-        {
-            name : '금어천',
-            path : [
-                new kakao.maps.LatLng(37.26544, 127.21426),
-                new kakao.maps.LatLng(37.26635, 127.22129),
-                new kakao.maps.LatLng(37.26619, 127.22134),
-                new kakao.maps.LatLng(37.26657, 127.22568),
-                new kakao.maps.LatLng(37.31843, 127.05767),
-                new kakao.maps.LatLng(37.31907, 127.05997),
-                new kakao.maps.LatLng(37.31938, 127.06178),
-                new kakao.maps.LatLng(37.31990, 127.06353),
-                new kakao.maps.LatLng(37.31961, 127.06443),
-                new kakao.maps.LatLng(37.31854, 127.06630),
-                new kakao.maps.LatLng(37.31680, 127.06886),
-                new kakao.maps.LatLng(37.31568, 127.07253),
-                new kakao.maps.LatLng(37.31515, 127.07461),
-                new kakao.maps.LatLng(37.31521, 127.07655),
-                new kakao.maps.LatLng(37.31510, 127.07843),
-                new kakao.maps.LatLng(37.31429, 127.08080),
-                new kakao.maps.LatLng(37.31380, 127.08344),
-                new kakao.maps.LatLng(37.31425, 127.08515),
-                new kakao.maps.LatLng(37.31430, 127.08969),
-                new kakao.maps.LatLng(37.31468, 127.09172),
-                new kakao.maps.LatLng(37.31858, 127.09561)
-            ]
-        }
-    ];*/
     var areas = [
         {
-            name : '금어천',
+            name : '',
             path : [
-                new kakao.maps.LatLng(37.31468, 127.09172),
-                new kakao.maps.LatLng(37.31858, 127.09561),
-                new kakao.maps.LatLng(37.26544, 127.21426),
-                new kakao.maps.LatLng(37.26635, 127.22129),
-                new kakao.maps.LatLng(37.26619, 127.22134),
-                new kakao.maps.LatLng(37.26657, 127.22568),
-                new kakao.maps.LatLng(37.31843, 127.05767),
-                new kakao.maps.LatLng(37.31907, 127.05997),
-                new kakao.maps.LatLng(37.31938, 127.06178),
-                new kakao.maps.LatLng(37.31990, 127.06353),
-                new kakao.maps.LatLng(37.31961, 127.06443),
-                new kakao.maps.LatLng(37.31854, 127.06630),
-                new kakao.maps.LatLng(37.31680, 127.06886),
-                new kakao.maps.LatLng(37.31568, 127.07253),
-                new kakao.maps.LatLng(37.31515, 127.07461),
-                new kakao.maps.LatLng(37.31858, 127.09561)
+
             ]
-        }
-    ];
-    var lines = [
-        {
-            name : '경로',
-            path : []
         }
     ];
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
@@ -124,21 +74,12 @@
         customOverlay = new kakao.maps.CustomOverlay({}),
         infowindow = new kakao.maps.InfoWindow({removable: true});
 
-    /*for (var i = 0, len = areas.length; i < len; i++) {
-        displayArea(areas[i]);
-    }*/
-
     for (var i = 0, len = areas.length; i < len; i++) {
-        for (var j = 0, len = 5; j < len; j++) {
-            displayArea(areas[i].path[j]);
-        }
+        displayArea(areas[i]);
     }
-    /*for (var i = 0, len = lines.length; i < len; i++) {
-        displayArea(lines[i]);
-    }*/
 
     // 마커를 표시할 위치와 title 객체 배열입니다
-    /*var positions = [{
+    var positions = [{
         title: '성복자이2차후문', latlng: new kakao.maps.LatLng(37.31843, 127.05767)
     }, {title: '성복자이2차정문',latlng: new kakao.maps.LatLng(37.31907, 127.05997)
     }, {title: '버들치마을 사거리',latlng: new kakao.maps.LatLng(37.31938, 127.06178)
@@ -190,7 +131,9 @@
     }, {title: '대지교',latlng: new kakao.maps.LatLng(37.33150, 127.11292)
     }, {title: '죽전현대홈타운3차2단지후문',latlng: new kakao.maps.LatLng(37.33397, 127.11342)
     }, {title: '현인마을e편한세상3차후문',latlng: new kakao.maps.LatLng(37.33467, 127.11272)
-    }];*/
+    }];
+
+    selectedMarker = null; // 클릭한 마커를 담을 변수
 
     for (var i = 0; i < positions.length; i ++) {
         // 마커를 생성합니다
@@ -212,15 +155,23 @@
             content : iwContent,
             removable : iwRemoveable
         });
-        infowindow.close();
+        //infowindow.close();
         // 마커에 클릭이벤트를 등록합니다
         kakao.maps.event.addListener(marker, 'click', makeOverListener(map, marker, infowindow));
+
+
     }
 
     // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
     function makeOverListener(map, marker, infowindow) {
         return function() {
+            // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면
+            // 마커의 이미지를 클릭 이미지로 변경합니다
+
             infowindow.open(map, marker);
+
+            // 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
+            selectedMarker = marker;
         };
     }
 
